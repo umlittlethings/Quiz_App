@@ -1,7 +1,3 @@
-Tentu, ini draf README.md untuk proyek aplikasi kuis Anda:
-
-Markdown
-
 # React Quiz Application
 
 A web-based quiz application built with React. Users can register, log in, take quizzes on various topics, and see their results. The application features a timer for quizzes and a pass/fail system.
