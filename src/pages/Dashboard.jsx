@@ -19,9 +19,6 @@ function Dashboard({ username, quizAttempts = {} }) {
 
   return (
     <div className="dashboard-container container mx-auto px-4 py-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-8">
-        Welcome, {username}!
-      </h1>
 
       {recentQuizzes.length > 0 && (
         <section className="mb-12">
