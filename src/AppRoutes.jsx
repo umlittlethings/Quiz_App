@@ -8,6 +8,11 @@ import Layout from './Layout';
 import NotFound from './pages/NotFound';
 import QuizDetail from './pages/QuizDetail';
 import Quiz from './components/Quiz/Quiz';
+import Notification from './pages/Notification';
+import Achievements from './pages/Achievement';
+import { getQuizzes } from './utils/Dummy'
+import Recent from './pages/Recent'
+import SearchQuiz from './pages/SearchQuiz';
 
 function AppRoutes({ isLoggedIn, user, onLogin, onRegister, onLogout, quizAttempts, updateQuizAttempt }) {
   const location = useLocation();
@@ -24,6 +29,17 @@ function AppRoutes({ isLoggedIn, user, onLogin, onRegister, onLogout, quizAttemp
     ease: 'easeInOut',
     duration: 0.3,
   };
+
+  const allQuizzes = getQuizzes();
+  const attemptedQuizIds = Object.keys(quizAttempts || {});
+  const recentQuizzes = [];
+
+  allQuizzes.forEach(quiz => {
+    if (attemptedQuizIds.includes(quiz.id)) {
+      recentQuizzes.push({ ...quiz, attempt: quizAttempts[quiz.id] });
+    }
+  });
+
 
   return (
     <AnimatePresence mode="wait">
@@ -128,7 +144,63 @@ function AppRoutes({ isLoggedIn, user, onLogin, onRegister, onLogout, quizAttemp
               </motion.div>
             }
           />
+           <Route
+            path="/notification"
+            element={
+              <motion.div
+                initial="initial"
+                animate="in"
+                exit="out"
+                variants={pageVariants}
+                transition={pageTransition}
+              >
+                {isLoggedIn
+                  ? <Notification username={user ? user.username : "User"} />
+                  : <Navigate to="/" />
+                }
+              </motion.div>
+            }
+          />
+          <Route
+            path="/achievements"
+            element={
+              <motion.div
+                initial="initial"
+                animate="in"
+                exit="out"
+                variants={pageVariants}
+                transition={pageTransition}
+              >
+                {isLoggedIn
+                  ? <Achievements />
+                  : <Navigate to="/" />
+                }
+              </motion.div>
+            }
+          />
+          <Route
+            path="/quiz-history"
+            element={
+              <>
+     
+              <motion.div
+                initial="initial"
+                animate="in"
+                exit="out"
+                variants={pageVariants}
+                transition={pageTransition}
+              >
+                {isLoggedIn
+                  ? <Recent recentQuizzes={recentQuizzes} />
+                  : <Navigate to="/" />
+                }
+              </motion.div>
+              </>
+            }
+          />
+          <Route path="/search" element={<SearchQuiz />} />
         </Route>
+        
       </Routes>
     </AnimatePresence>
   );

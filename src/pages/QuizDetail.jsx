@@ -20,42 +20,72 @@ function QuizDetail({ quizAttempts, username }) {
   }
 
   const hasPassed = attempt?.status === 'passed';
-  const canRetry = !hasPassed; // User can retry if not passed or not attempted
+  const canRetry = !hasPassed;
 
   const handleStartQuiz = () => {
     navigate(`/quiz/${quizId}/attempt`);
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="bg-white shadow-xl rounded-lg p-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">{quiz.title}</h1>
-        <p className="text-gray-600 mb-2"><span className="font-semibold">Description:</span> {quiz.description}</p>
-        <p className="text-gray-600 mb-2"><span className="font-semibold">Number of Questions:</span> {quiz.questions.length}</p>
-        <p className="text-gray-600 mb-6"><span className="font-semibold">Time Limit:</span> {quiz.timeLimit / 60} minutes</p>
-
-        {attempt && (
-          <div className={`mb-6 p-4 rounded-md ${hasPassed ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-            <h3 className="font-semibold text-lg">Previous Attempt:</h3>
-            <p>Status: <span className="font-bold">{attempt.status}</span></p>
-            <p>Score: {attempt.score} / {attempt.total}</p>
+    <div className="container mx-auto px-4 py-10">
+      <h2 className="text-2xl font-bold text-blue-700 mb-6">Recent Quizzes</h2>
+      <div className="flex flex-col lg:flex-row bg-white rounded-lg shadow-xl overflow-hidden">
+        {/* Left: Video & Description */}
+        <div className="lg:w-2/3 p-6">
+          <div className="rounded-lg overflow-hidden mb-4">
+            <video
+              src={'/video/placeholder.mp4'}
+              controls
+              className="w-full rounded-lg"
+            />
           </div>
-        )}
-
-        {canRetry ? (
-          <button
-            onClick={handleStartQuiz}
-            className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg text-lg transition-colors duration-200"
-            disabled={hasPassed} // Technically redundant due to canRetry but good for clarity
-          >
-            {attempt ? 'Try Again' : 'Start Quiz'}
-          </button>
-        ) : (
-          <p className="text-green-600 font-semibold text-lg text-center py-3 bg-green-50 rounded-md">
-            You have already passed this quiz!
+          <h3 className="text-2xl font-semibold text-gray-900 mb-2">{quiz.title}</h3>
+          <hr className="mb-4" />
+          <p className="text-gray-700 text-sm mb-2">{quiz.description}</p>
+          <p className="text-gray-700 text-sm">
+            To start, click the "Start" button. When finished, click the "Submit" button.
           </p>
-        )}
-         <Link to="/dashboard" className="block text-center text-blue-500 hover:underline mt-6">
+        </div>
+
+        {/* Right: Quiz Info + Action */}
+        <div className="lg:w-1/3 p-6 bg-gray-50 border-l">
+          <div className="space-y-3 text-sm text-gray-700">
+            <p><span className="font-bold">Date:</span> {quiz.date || '28/07/2021'}</p>
+            <p><span className="font-bold">Time Limit:</span> {quiz.timeLimit / 60} Mins</p>
+            <p><span className="font-bold">Attempts:</span> {hasPassed ? 'Used' : 'Twice'}</p>
+            <p><span className="font-bold">Pass Points:</span> {quiz.passScore || '80 Points'}</p>
+          </div>
+
+          {/* Attempt Info */}
+          {attempt && (
+            <div
+              className={`mt-4 p-3 rounded-md text-sm ${
+                hasPassed ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
+              }`}
+            >
+              <p><strong>Status:</strong> {attempt.status}</p>
+              <p><strong>Score:</strong> {attempt.score} / {attempt.total}</p>
+            </div>
+          )}
+
+          {/* Start / Retry Button */}
+          {canRetry ? (
+            <button
+              onClick={handleStartQuiz}
+              className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-lg font-semibold text-center"
+            >
+              {attempt ? 'Retry Quiz' : 'Start Quiz'}
+            </button>
+          ) : (
+            <p className="mt-6 text-green-600 font-semibold text-center">
+              You have already passed this quiz!
+            </p>
+          )}
+        </div>
+      </div>
+
+      <div className="mt-6 text-center">
+        <Link to="/dashboard" className="text-blue-500 hover:underline">
           Back to Dashboard
         </Link>
       </div>

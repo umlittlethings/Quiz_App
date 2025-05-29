@@ -1,39 +1,35 @@
 import React from 'react';
-import { Outlet, Link } from 'react-router-dom';
-import Navbar from './components/Navbar/Navbar'; // Pastikan path ini benar
+import { Outlet } from 'react-router-dom';
+import Navbar from './components/Navbar/Navbar';
+import Sidebar from './components/Sidebar/Sidebar'; // Pastikan path ini sesuai
 
 function Layout({ isLoggedIn, user, onLogout }) {
   return (
-    <div className="">
-      {/* Header hanya akan dirender jika pengguna sudah login */}
+    <div className="min-h-screen flex flex-col font-poppins ">
+      {/* Header */}
       {isLoggedIn && (
-        <header className="">
-          <div className=""> {/* Anda mungkin ingin class di sini untuk styling header/navbar container */}
-            {/* Navbar hanya akan dirender dan mendapatkan username jika pengguna sudah login */}
-            <Navbar username={user ? user.username : null} />
-            
-            {/* Tombol Logout juga hanya relevan jika pengguna sudah login, jadi bisa tetap di sini */}
-            <div className=""> {/* Kelas untuk styling container tombol logout jika perlu */}
-              <button
-                onClick={onLogout}
-                className="" // Tambahkan kelas styling untuk tombol logout Anda
-              >
-                Logout
-              </button>
-            </div>
-          </div>
+        <header className='sticky top-0 z-50 bg-white'>
+          <Navbar username={user ? user.username : null} />
         </header>
       )}
 
-      <main className="">
-        <Outlet /> {/* Konten halaman (Login, Register, Dashboard, dll.) akan dirender di sini */}
-      </main>
+      {/* Body: Sidebar + Content */}
+      <div className="flex flex-1">
+        {/* Sidebar hanya ditampilkan jika login */}
+        {isLoggedIn && (
+          <aside className="w-64 sticky top-20 h-fit bg-white">
+            <Sidebar onLogout={onLogout} />
+          </aside>
 
-      <footer className="">
-        <div className="">
-          {/* Konten footer Anda */}
-        </div>
-      </footer>
+        )}
+
+        {/* Konten Utama */}
+        <main className="flex-1">
+          <Outlet />
+        </main>
+      </div>
+
+    
     </div>
   );
 }
