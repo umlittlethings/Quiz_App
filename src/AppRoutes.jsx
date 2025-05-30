@@ -10,14 +10,17 @@ import QuizDetail from './pages/QuizDetail';
 import Quiz from './components/Quiz/Quiz';
 import Notification from './pages/Notification';
 import Achievements from './pages/Achievement';
-import { getQuizzes } from './utils/Dummy'
 import Recent from './pages/Recent'
 import SearchQuiz from './pages/SearchQuiz';
+import { useEffect, useState } from 'react';
+import { fetchQuizData } from './utils/Api';
 
 function AppRoutes({ isLoggedIn, user, onLogin, onRegister, onLogout, quizAttempts, updateQuizAttempt }) {
   const location = useLocation();
+  const [allQuizzes, setAllQuizzes] = useState([]);
+  const [isQuizLoading, setIsQuizLoading] = useState(true);
+  const [quizError, setQuizError] = useState(null);
 
-  // Variants animasi halaman masuk dan keluar
   const pageVariants = {
     initial: { opacity: 0, y: 20 },
     in: { opacity: 1, y: 0 },
@@ -30,13 +33,33 @@ function AppRoutes({ isLoggedIn, user, onLogin, onRegister, onLogout, quizAttemp
     duration: 0.3,
   };
 
-  const allQuizzes = getQuizzes();
+  useEffect(() => {
+    setIsQuizLoading(true);
+    const timer = setTimeout(() => {
+      fetchQuizData()
+        .then(singleQuiz => {
+          setAllQuizzes([singleQuiz]);
+          setIsQuizLoading(false);
+        })
+        .catch(err => {
+          setQuizError('Failed to load quizzes');
+          setIsQuizLoading(false);
+        });
+    }, 2000); 
+
+    return () => clearTimeout(timer);
+  }, []);
+
+
   const attemptedQuizIds = Object.keys(quizAttempts || {});
   const recentQuizzes = [];
+  const availableQuizzes = [];
 
   allQuizzes.forEach(quiz => {
     if (attemptedQuizIds.includes(quiz.id)) {
       recentQuizzes.push({ ...quiz, attempt: quizAttempts[quiz.id] });
+    } else {
+      availableQuizzes.push(quiz);
     }
   });
 
@@ -90,7 +113,17 @@ function AppRoutes({ isLoggedIn, user, onLogin, onRegister, onLogout, quizAttemp
                 transition={pageTransition}
               >
                 {isLoggedIn
-                  ? <Dashboard username={user?.username || 'User'} quizAttempts={quizAttempts} />
+                  ? isQuizLoading
+                    ? <div>Loading quizzes...</div>
+                    : quizError
+                      ? <div>{quizError}</div>
+                      : <Dashboard
+                          username={user?.username || 'User'}
+                          quizAttempts={quizAttempts}
+                          allQuizzes={allQuizzes}
+                          recentQuizzes={recentQuizzes}
+                          availableQuizzes={availableQuizzes}
+                        />
                   : <Navigate to="/" />
                 }
               </motion.div>
@@ -106,8 +139,8 @@ function AppRoutes({ isLoggedIn, user, onLogin, onRegister, onLogout, quizAttemp
                 variants={pageVariants}
                 transition={pageTransition}
               >
-                {isLoggedIn
-                  ? <QuizDetail quizAttempts={quizAttempts} username={user?.username} />
+                { isLoggedIn
+                  ? <QuizDetail quizAttempts={quizAttempts} username={user?.username} allQuizzes={allQuizzes} />
                   : <Navigate to="/" />
                 }
               </motion.div>
@@ -124,7 +157,7 @@ function AppRoutes({ isLoggedIn, user, onLogin, onRegister, onLogout, quizAttemp
                 transition={pageTransition}
               >
                 {isLoggedIn
-                  ? <Quiz updateQuizAttempt={updateQuizAttempt} quizAttempts={quizAttempts} />
+                  ? <Quiz updateQuizAttempt={updateQuizAttempt} quizAttempts={quizAttempts} allQuizzes={allQuizzes} />
                   : <Navigate to="/" />
                 }
               </motion.div>

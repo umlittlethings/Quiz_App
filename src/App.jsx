@@ -5,7 +5,6 @@ import AppRoutes from './AppRoutes';
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
-  // State to store quiz attempts: { quizId: { status: 'passed'/'failed', score: X, total: Y } }
   const [quizAttempts, setQuizAttempts] = useState({});
 
   useEffect(() => {
@@ -14,7 +13,6 @@ function App() {
       setUser(JSON.parse(storedUser));
       setIsLoggedIn(true);
     }
-    // Quiz attempts are intentionally not persisted to localStorage to meet the refresh requirement
   }, []);
 
   const handleLogin = (userData) => {
@@ -24,7 +22,6 @@ function App() {
   };
 
   const handleRegister = (userData) => {
-    // For simplicity, treating registration as an automatic login
     handleLogin(userData);
   };
 
@@ -32,7 +29,7 @@ function App() {
     setUser(null);
     setIsLoggedIn(false);
     localStorage.removeItem('quizAppUser');
-    setQuizAttempts({}); // Reset quiz attempts on logout
+    setQuizAttempts({}); 
   };
 
   const updateQuizAttempt = (quizId, attemptData) => {

@@ -3,7 +3,7 @@ const dummyQuizData = [
     id: 'quiz1',
     title: 'General Knowledge Basics',
     description: 'A quick test of your general knowledge. 5 questions.',
-    timeLimit: 30 * 60, // 30 minutes in seconds
+    timeLimit: 30 * 60,
     questions: [
       {
         question: "What is 2 + 2?",
@@ -59,7 +59,7 @@ const dummyQuizData = [
     id: 'quiz2',
     title: 'Tech Concepts',
     description: 'Test your knowledge of basic tech terms. 3 questions.',
-    timeLimit: 15 * 60, // 15 minutes
+    timeLimit: 15 * 60, 
     questions: [
       {
         question: "Which company developed the React library?",

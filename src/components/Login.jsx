@@ -8,7 +8,6 @@ function Login({ onLogin, switchToRegister }) {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Efek untuk menyembunyikan pesan error secara otomatis setelah 5 detik
   useEffect(() => {
     if (error) {
       const timer = setTimeout(() => {

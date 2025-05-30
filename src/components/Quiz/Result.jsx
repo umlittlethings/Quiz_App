@@ -18,7 +18,7 @@ function Result({ score, total, onRestart, isPassed, quizId }) {
         </p>
       ) : (
         <p className="text-2xl font-semibold text-red-600 mb-8">
-          You did not pass. Keep trying! 💪
+          You did not pass. Keep trying! 
         </p>
       )}
 

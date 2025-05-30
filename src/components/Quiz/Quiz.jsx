@@ -1,21 +1,19 @@
 import React from 'react';
 import { useParams, Navigate } from 'react-router-dom';
-import useQuiz from '../../hooks/UseQuiz'; // Adjust path
-import Question from './Question'; // Adjust path
-import Result from './Result'; // Adjust path
+import useQuiz from '../../hooks/UseQuiz'; 
+import Question from './Question'; 
+import Result from './Result'; 
 
-function Quiz({ updateQuizAttempt, quizAttempts }) {
+function Quiz({ updateQuizAttempt, quizAttempts, allQuizzes }) {
   const { quizId } = useParams();
 
-  // Prevent re-attempt if already passed
+
   const attemptDetails = quizAttempts[quizId];
   if (attemptDetails?.status === 'passed') {
-    // Optionally, show a message or redirect immediately
-    // For now, redirecting to quiz detail which will show the "passed" status
     return <Navigate to={`/quiz/${quizId}`} replace />;
   }
 
-  const {
+   const {
     quizTitle,
     questions,
     currentQuestionIndex,
@@ -25,12 +23,15 @@ function Quiz({ updateQuizAttempt, quizAttempts }) {
     error,
     timeLeft,
     handleAnswer,
-    restartQuiz, // This restart is for the Result component's "Try Again" for a failed attempt
+    restartQuiz,
     isQuizActive
-  } = useQuiz(quizId, updateQuizAttempt);
+  } = useQuiz(quizId, allQuizzes, updateQuizAttempt);
 
   if (isLoading) return <div className="text-center py-10 text-lg">Loading quiz questions...</div>;
   if (error) return <div className="text-center py-10 text-red-500 text-lg">{error}</div>;
+  if (!questions || questions.length === 0) {
+    return <div className="text-center py-10 text-lg">No questions available for this quiz.</div>;
+  }
   if (!isQuizActive && !showResults) return <div className="text-center py-10 text-lg">Preparing quiz...</div>;
 
 
@@ -42,7 +43,7 @@ function Quiz({ updateQuizAttempt, quizAttempts }) {
       <Result
         score={score}
         total={totalQuestions}
-        onRestart={restartQuiz} // This allows retrying immediately if failed
+        onRestart={restartQuiz} 
         isPassed={isPassed}
         quizId={quizId}
       />
@@ -70,7 +71,7 @@ function Quiz({ updateQuizAttempt, quizAttempts }) {
       </div>
       <Question
         question={current.question}
-        answers={current.answers} // Already shuffled in useQuiz
+        answers={current.answers}
         onAnswer={handleAnswer}
       />
     </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { getQuizzes } from '../utils/Dummy'; // Pastikan path benar
+import { fetchQuizData } from '../utils/Api'; 
 import QuizCard from '../components/Quiz/QuizCard';
 
 function useQuery() {
@@ -15,15 +15,21 @@ function SearchQuiz() {
 
   useEffect(() => {
     setIsLoading(true);
-    setTimeout(() => {
-      const allQuizzes = getQuizzes();
-      setFiltered(
-        allQuizzes.filter(q =>
-          q.title.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      );
-      setIsLoading(false);
-    }, 700);
+    const timer = setTimeout(() => {
+      fetchQuizData()
+        .then(quiz => {
+          const quizzes = [quiz];
+          setFiltered(
+            quizzes.filter(q =>
+              q.title.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+          );
+        })
+        .catch(() => setFiltered([]))
+        .finally(() => setIsLoading(false));
+    }, 2000); 
+
+    return () => clearTimeout(timer);
   }, [searchTerm]);
 
   return (
